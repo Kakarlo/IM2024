@@ -1,0 +1,48 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/product">Product</a></li>
+    <li class="breadcrumb-item"><a href="/product/category">Category</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Category</li>
+  </ol>
+</nav>
+
+{{#each rows}}
+  <form class="row g-3 needs-validation" method="POST" action="/product/category/editcategory/{{this.id}}">
+    <div class="col-md-6">
+      <label for="name">Category Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        value="{{this.name}}"
+        name="name"
+        placeholder="Product Name"
+        required
+      />
+    </div>
+    <div class="col-md-6">
+      <label for="category">Parent Category</label>
+      <select class="form-select" id="category" name="category">
+        <option selected disabled></option>
+        {{#each category_option}}
+          {{#ifCond name ../parent}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+{{/each}}

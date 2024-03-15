@@ -1,0 +1,260 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IM Frontend</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <!-- Offcanvas Trigger-->
+        <button
+          class="navbar-toggler me-2"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasExample"
+          aria-controls="offcanvasExample"
+        >
+          <span class="navbar-toggler-icon" data-bs-target="#offcanvasExample"></span>
+        </button>
+        <!-- Offcanvas Trigger-->
+        <a class="navbar-brand fw-bold text-uppercase me-auto" href="/dashboard">El-Ar Collections</a>
+        <form class="d-flex my-auto">
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-person-fill"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/settings"><i class="bi bi-gear"></i> Settings</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-right"></i> Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </form>
+
+      </div>
+    </nav>
+    <!-- Navbar -->
+
+    <!-- POS -->
+
+    <section class="mt-1 pt-3">
+      <div class="container-fluid pt-5 px-5">
+        <div class="row">
+          <div class="col-md-8 card">
+
+            <div class="input-group mb-3 pt-2">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search for a product"
+                aria-label="Search for a product"
+                aria-describedby="button-addon2"
+              />
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i
+                  class="bi bi-search"
+                ></i></button>
+            </div>
+
+            <ul class="nav bg radius nav-pills nav-fill mb-3 bg" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active show" data-toggle="pill" href="#nav-tab-card">
+                  <i class="fa fa-tags"></i>
+                  All</a></li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#nav-tab-paypal">
+                  <i class="fa fa-tags"></i>
+                  Category 1</a></li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#nav-tab-bank">
+                  <i class="fa fa-tags"></i>
+                  Category 2</a></li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#nav-tab-bank">
+                  <i class="fa fa-tags"></i>
+                  Category 3</a></li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#nav-tab-bank">
+                  <i class="fa fa-tags"></i>
+                  Category 4</a></li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#nav-tab-bank">
+                  <i class="fa fa-tags"></i>
+                  Category 5</a></li>
+            </ul>
+
+            <span id="items">
+              <div class="row">
+
+                <div class="col-md-3">
+                  <div class="card card-product">
+                    <span class="badge-new my-2"> NEW </span>
+                    <div class="info-wrap d-flex flex-column justify-content-between">
+                      <div class="price-wrap h5">
+                        <span class="price-new">$1280</span>
+                      </div>
+                      <div class="action-wrap text-center">
+                        <a href="#" class="btn btn-primary btn-sm mt-auto"> <i class="fa fa-cart-plus"></i> Add </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <figure class="card card-product">
+                    <span class="badge-new my-2"> NEW </span>
+                    <figcaption class="info-wrap d-flex flex-column justify-content-between">
+                      <div class="price-wrap h5">
+                        <span class="price-new">$1280</span>
+                      </div>
+                      <div class="action-wrap text-center">
+                        <a href="#" class="btn btn-primary btn-sm mt-auto"> <i class="fa fa-cart-plus"></i> Add </a>
+                      </div>
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="col-md-3">
+                  <figure class="card card-product">
+                    <span class="badge-new my-2"> NEW </span>
+                    <figcaption class="info-wrap d-flex flex-column justify-content-between">
+                      <div class="price-wrap h5">
+                        <span class="price-new">$1280</span>
+                      </div>
+                      <div class="action-wrap text-center">
+                        <a href="#" class="btn btn-primary btn-sm mt-auto"> <i class="fa fa-cart-plus"></i> Add </a>
+                      </div>
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="col-md-3">
+                  <figure class="card card-product">
+                    <span class="badge-new my-2"> NEW </span>
+                    <figcaption class="info-wrap d-flex flex-column justify-content-between">
+                      <div class="price-wrap h5">
+                        <span class="price-new">$1280</span>
+                      </div>
+                      <div class="action-wrap text-center">
+                        <a href="#" class="btn btn-primary btn-sm mt-auto"> <i class="fa fa-cart-plus"></i> Add </a>
+                      </div>
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="col-md-3">
+                  <figure class="card card-product">
+                    <span class="badge-new my-2"> NEW </span>
+                    <figcaption class="info-wrap d-flex flex-column justify-content-between">
+                      <div class="price-wrap h5">
+                        <span class="price-new">$1280</span>
+                      </div>
+                      <div class="action-wrap text-center">
+                        <a href="#" class="btn btn-primary btn-sm mt-auto"> <i class="fa fa-cart-plus"></i> Add </a>
+                      </div>
+                    </figcaption>
+                  </figure>
+                </div>
+
+              </div>
+            </span>
+          </div>
+
+          <div class="col-md-4 card pt-2">
+            <div class="card table-responsive">
+              <span id="cart">
+                <table class="table table-hover align-middle shopping-cart-wrap">
+                  <thead class="text-muted">
+                    <tr>
+                      <th scope="col">Item</th>
+                      <th scope="col">Qty</th>
+                      <th scope="col">Price</th>
+                      <th scope="col" class="text-right">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h6 class="title text-truncate">Product name </h6>
+                      </td>
+                      <td class="text-center">
+                        <div class="m-btn-group m-btn-group--pill btn-group mr-2" role="group" aria-label="...">
+                          <button type="button" class="m-btn btn btn-sm btn-default"><i class="bi bi-dash"></i></button>
+                          <button type="button" class="m-btn btn btn-sm btn-default" disabled>3</button>
+                          <button type="button" class="m-btn btn btn-sm btn-default"><i class="bi bi-plus"></i></button>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="price-wrap">
+                          <var class="price">$145</var>
+                        </div>
+                        <!-- price-wrap .// -->
+                      </td>
+                      <td class="text-right">
+                        <a href="" class="btn btn-sm btn-outline-danger"> <i class="bi bi-trash3"></i></a>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </span>
+            </div>
+            <!-- card.// -->
+            <div class="box">
+              <dl class="dlist-align">
+                <dt>Tax: </dt>
+                <dd class="text-right">12%</dd>
+              </dl>
+              <dl class="dlist-align">
+                <dt>Discount:</dt>
+                <dd class="text-right"><a href="#">0%</a></dd>
+              </dl>
+              <dl class="dlist-align">
+                <dt>Sub Total:</dt>
+                <dd class="text-right">$215</dd>
+              </dl>
+              <dl class="dlist-align">
+                <dt>Total: </dt>
+                <dd class="text-right h4 b"> $215 </dd>
+              </dl>
+              <div class="row">
+                <div class="col-md-6">
+                  <a href="#" class="btn btn-default btn-error btn-lg btn-block"><i class="fa fa-times-circle"></i>
+                    Cancel
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a href="#" class="btn btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i> Charge </a>
+                </div>
+              </div>
+            </div>
+            <!-- box.// -->
+          </div>
+        </div>
+      </div><!-- container //  -->
+    </section>
+
+    <!-- POS -->
+
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+    <script src="./js/jquery.dataTables.min.js"></script>
+    <script src="./js/dataTables.bootstrap5.min.js"></script>
+    <script src="./js/script.js"></script>
+  </body>
+</html>

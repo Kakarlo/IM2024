@@ -1,0 +1,52 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/stockin">Stockin</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Add Stockin</li>
+  </ol>
+</nav>
+
+<form class="row g-3 needs-validation" method="POST" action="/stockin/addstockin">
+  <div class="col-md-6">
+    <label for="supplier">Supplier</label>
+    <select class="form-select" id="supplier" name="supplier" required>
+      {{#each supplier_option}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="invoice">Invoice</label>
+    <select class="form-select" id="invoice" name="invoice" required>
+      {{#each invoice_option}}
+        <option value="{{id}}">{{sinvoice_code}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="warehouse">Warehouse</label>
+    <select class="form-select" id="warehouse" name="warehouse" required>
+      {{#each warehouse_option}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="shipment">Shipment ID</label>
+    <select class="form-select" id="shipment" name="shipment" required>
+      {{#each shipment_option}}
+        <option value="{{id}}">{{id}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-12">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

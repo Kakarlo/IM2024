@@ -1,0 +1,131 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/stockin">Stockin</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Stockin</li>
+  </ol>
+</nav>
+
+{{#each rows}}
+  <form class="row g-3 needs-validation" method="POST" action="/stockin/editstockin/{{this.id}}">
+    <div class="col-md-6">
+      <label for="supplier">Supplier</label>
+      <select class="form-select" id="supplier" name="supplier" required>
+        {{#each supplier_option}}
+          {{#ifCond name ../supplier}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="invoice">Invoice</label>
+      <select class="form-select" id="invoice" name="invoice" required>
+        {{#each invoice_option}}
+          {{#ifCond sinvoice_code ../invoice}}
+            <option value="{{id}}" selected>{{sinvoice_code}}</option>
+          {{else}}
+            <option value="{{id}}">{{sinvoice_code}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="warehouse">Warehouse</label>
+      <select class="form-select" id="warehouse" name="warehouse" required>
+        {{#each warehouse_option}}
+          {{#ifCond name ../warehouse}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="shipment">Shipment ID</label>
+      <select class="form-select" id="shipment" name="shipment" required>
+        {{#each shipment_option}}
+          {{#ifCond id ../shipment}}
+            <option value="{{id}}" selected>{{id}}</option>
+          {{else}}
+            <option value="{{id}}">{{id}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+  <div class="col-md-12 table-responsive">
+      <div class="col-6"><h4>Items</h4></div>
+      <div class="d-flex justify-content-end">
+        <a href="/stockin/editstockin/{{this.id}}/additem/{{this.invoice_id}}/{{this.warehouse_id}}" type="button" class="btn btn-secondary btn-sm align-self-center mx-2">+
+          Add Item</a>
+      </div>
+      <table class="table table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">SKU</th>
+            <th scope="col">Quantity</th>
+            <th scope="col" class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each item}}
+            <tr>
+              <th scope="row">{{this.sku}}</th>
+              <td>{{this.quantity}}</td>
+              <td class="text-end">
+                <a href="/stockin/editstockin/{{this.id}}/edititem/{{this.sku_id}}/{{../invoice_id}}/{{../warehouse_id}}" type="button" class="btn btn-light btn-sm"><i
+                    class="bi bi-pencil"
+                  >Edit</i></a>
+                <a
+                  href="#"
+                  type="button"
+                  class="btn btn-light btn-sm"
+                  data-bs-toggle="modal"
+                  id="deleteBtn"
+                  data-bs-target="#deleteStockinItem"
+                  data-bs-id="{{this.id}}"
+                  data-bs-warehouse="{{../warehouse_id}}"
+                  data-bs-sku="{{this.sku_id}}"
+                ><i class="bi bi-person-x">Delete</i></a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+{{/each}}
+
+<!-- Modal -->
+<div class="modal fade" id="deleteStockinItem" tabindex="-1" aria-labelledby="deleteStockinItemLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Would you like to proceed in removing this Item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="" id="deleteForm" method="POST">
+          <button type="submit" class="btn btn-primary">Yes, Remove Item</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

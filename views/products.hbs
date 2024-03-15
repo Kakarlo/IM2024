@@ -1,0 +1,108 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<div class="row" style="justify-content: flex-end">
+  <div class="col-md-8"><h1>Products</h1></div>
+  <form class="col-md-4 d-flex" role="search" method="POST" action="/product" novalidate>
+    <input
+      class="form-control me-2"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+      name="search"
+      value="{{search}}"
+    />
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
+  <div class="d-flex col-md-5 justify-content-end">
+    <a href="/product/addproduct" type="button" class="btn btn-primary align-self-center mx-2">+ Add Product</a>
+    <a href="/product/category" type="button" class="btn btn-secondary align-self-center">Edit Category</a>
+  </div>
+</div>
+<div class="col-md-12 table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Product Description</th>
+        <th scope="col">Category</th>
+        <th scope="col" class="text-end">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each rows}}
+        <tr>
+          <th scope="row">{{this.id}}</th>
+          <td>{{this.name}}</td>
+          <td>{{this.description}}</td>
+          <td>{{this.category}}</td>
+          <td class="text-end">
+            <a href="/product/editproduct/{{this.id}}" type="button" class="btn btn-light btn-sm"><i
+                class="bi bi-pencil"
+              >Edit</i></a>
+            <a
+              href="#"
+              type="button"
+              class="btn btn-light btn-sm"
+              data-bs-toggle="modal"
+              id="deleteBtn"
+              data-bs-target="#deleteProduct"
+              data-bs-id="{{this.id}}"
+            ><i class="bi bi-person-x">Delete</i></a>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<nav aria-label="Table pagination">
+  <ul class="pagination justify-content-end">
+    {{#each pagin}}
+      {{#if active}}
+        <li class="page-item active"><a
+            class="page-link"
+            href="/product?page={{this.value}}&search={{../search}}"
+          >{{this.name}}</a></li>
+      {{else}}
+        {{#if disabled}}
+          <li class="page-item disabled"><a
+              class="page-link"
+              href="/product?page={{this.value}}&search={{../search}}"
+            >{{this.name}}</a></li>
+        {{else}}
+          <li class="page-item"><a
+              class="page-link"
+              href="/product?page={{this.value}}&search={{../search}}"
+            >{{this.name}}</a></li>
+        {{/if}}
+      {{/if}}
+    {{/each}}
+  </ul>
+</nav>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteProduct" tabindex="-1" aria-labelledby="deleteProductLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Would you like to proceed in removing this Product?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="" id="deleteForm" method="POST">
+          <button type="submit" class="btn btn-primary">Yes, Remove Product</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/supplier">Supplier</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Supplier</li>
+  </ol>
+</nav>
+
+{{#each rows}}
+  <form class="row g-3 needs-validation" method="POST" action="/supplier/editsupplier/{{this.id}}">
+    <div class="col-md-6">
+      <input type="hidden" name="supplier_id" value="{{this.id}}" />
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" value="{{this.name}}" name="name" placeholder="Name" required />
+    </div>
+    <div class="col-md-6">
+      <label for="id">Status ID</label>
+      <select class="form-select" id="id" name="id" required>
+        {{#each status_option}}
+          {{#ifCond name this.status}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond }}
+        {{/each}}
+      </select>
+    </div>
+    {{> contact-address-table}}
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+{{/each}}

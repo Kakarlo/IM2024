@@ -1,0 +1,92 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/sku">SKU</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit SKU</li>
+  </ol>
+</nav>
+
+{{#each rows}}
+  <form class="row g-3 needs-validation" method="POST" action="/sku/editsku/{{this.id}}">
+    <div class="col-md-6">
+      <label for="codename">SKU Code Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="codename"
+        value="{{this.codename}}"
+        name="codename"
+        placeholder="SKU Code Name"
+        required
+      />
+    </div>
+    <div class="col-md-6">
+      <label for="product">Product</label>
+      <select class="form-select" id="product" name="product" required>
+        {{#each product_option}}
+          {{#ifCond name ../product_name}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+        
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+  <div class="row">
+  <div class="col-md-6 table-responsive">
+    <div class="col-8"><h4>Variations</h4></div>
+    <table class="table table-striped table-hover align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Variation</th>
+          <th scope="col">Variation Option</th>
+          <th scope="col" class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each variation}}
+          <tr>
+            <th scope="row">{{this.variation}}</th>
+            <td>{{this.variation_option}}</td>
+            <td class="text-end">
+              <form method="POST" action="/sku/editsku/editvariation/{{../id}}/{{this.id}}?_method=DELETE">
+              <button type="submit" class="btn btn-light btn-sm"><i class="bi bi-person-x">Delete</i></button>
+              </form>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-6">
+      <br>
+      <label for="variation">Add Variation</label>
+      <form method="POST" action="/sku/editsku/addvariation/{{this.id}}">
+        <div class="input-group">
+          <select class="form-select" id="variation" name="variation" aria-label="Example select with button addon">
+            {{#each variation_option}}
+              {{#ifCond name ../product_name}}
+                <option value="{{id}}" selected>{{name}}</option>
+              {{else}}
+                <option value="{{id}}">{{name}}</option>
+              {{/ifCond}}
+            {{/each}}
+          </select>
+          <button class="btn btn-outline-secondary" type="submit">Button</button>
+        </div>
+      </form>
+    </div>
+    </div>
+{{/each}}

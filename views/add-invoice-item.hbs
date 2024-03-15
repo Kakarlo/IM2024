@@ -1,0 +1,46 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/invoice">Invoice</a></li>
+    <li class="breadcrumb-item"><a href="/invoice/editinvoice/{{this.id}}">Edit Invoice</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Add Item</li>
+  </ol>
+</nav>
+
+<form class="row g-3 needs-validation" method="POST" action="/invoice/editinvoice/{{this.id}}/additem">
+  <div class="col-md-6">
+    <label for="sku">SKU</label>
+    <select class="form-select" id="sku" name="sku" required>
+      {{#each sku_option}}
+        <option value="{{id}}">{{codename}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="qty">Quantity</label>
+    <input type="number" class="form-control" id="qty" name="qty" min="1" placeholder="Product Quantity" required />
+  </div>
+  <div class="col-md-6">
+    <label for="price">Supplier Price per item</label>
+    <input
+      type="number"
+      class="form-control"
+      id="price"
+      name="price"
+      min="1"
+      step="0.01"
+      placeholder="Supplier Price"
+      required
+    />
+  </div>
+  <div class="col-md-12">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

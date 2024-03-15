@@ -1,0 +1,122 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/invoice">Invoice</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Invoice</li>
+  </ol>
+</nav>
+
+{{#each rows}}
+  <form class="row g-3 needs-validation" method="POST" action="/invoice/editinvoice/{{this.id}}">
+    <div class="col-md-6">
+      <label for="code">Invoice Code</label>
+      <input
+        type="text"
+        class="form-control"
+        id="code"
+        value="{{this.code}}"
+        name="code"
+        placeholder="Invoice Code"
+        required
+      />
+    </div>
+    <div class="col-md-6">
+      <label for="supplier">Supplier</label>
+      <select class="form-select" id="supplier" name="supplier" required>
+        {{#each supplier_option}}
+          {{#ifCond name ../supplier}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="status">Status</label>
+      <select class="form-select" id="status" name="status" required>
+        {{#each status_option}}
+          {{#ifCond name ../status}}
+            <option value="{{id}}" selected>{{name}}</option>
+          {{else}}
+            <option value="{{id}}">{{name}}</option>
+          {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+  <div class="col-md-12 table-responsive">
+      <div class="col-6"><h4>Item</h4></div>
+      <div class="d-flex justify-content-end">
+        <a href="/invoice/editinvoice/{{this.id}}/additem/" type="button" class="btn btn-secondary btn-sm align-self-center mx-2">+
+          Add Item</a>
+      </div>
+      <table class="table table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">SKU</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Total</th>
+            <th scope="col" class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each item}}
+            <tr>
+              <th scope="row">{{this.sku}}</th>
+              <td>{{this.quantity}}</td>
+              <td>{{this.price}}</td>
+              <td>{{this.total}}</td>
+              <td class="text-end">
+                <a href="/invoice/editinvoice/{{this.id}}/edititem/{{this.sku_id}}" type="button" class="btn btn-light btn-sm"><i
+                    class="bi bi-pencil"
+                  >Edit</i></a>
+                <a
+                  href="#"
+                  type="button"
+                  class="btn btn-light btn-sm"
+                  data-bs-toggle="modal"
+                  id="deleteBtn"
+                  data-bs-target="#deleteInvoiceItem"
+                  data-bs-id="{{this.id}}"
+                  data-bs-sku="{{this.sku_id}}"
+                ><i class="bi bi-person-x">Delete</i></a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+{{/each}}
+
+<!-- Modal -->
+<div class="modal fade" id="deleteInvoiceItem" tabindex="-1" aria-labelledby="deleteInvoiceItemLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Would you like to proceed in removing this Item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="" id="deleteForm" method="POST">
+          <button type="submit" class="btn btn-primary">Yes, Remove Item</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

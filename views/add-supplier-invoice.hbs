@@ -1,0 +1,40 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/invoice">Invoice</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Add Invoice</li>
+  </ol>
+</nav>
+
+<form class="row g-3 needs-validation" method="POST" action="/invoice/addinvoice">
+  <div class="col-md-6">
+    <label for="code">Invoice Code</label>
+    <input type="text" class="form-control" id="code" name="code" placeholder="Invoice Code" required />
+  </div>
+  <div class="col-md-6">
+    <label for="supplier">Supplier</label>
+    <select class="form-select" id="supplier" name="supplier" required>
+      {{#each supplier_option}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="status">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      {{#each status_option}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-12">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

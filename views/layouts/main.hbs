@@ -1,0 +1,247 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EL-AR</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <!-- Offcanvas Trigger-->
+        <button
+          class="navbar-toggler me-2"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasExample"
+          aria-controls="offcanvasExample"
+        >
+          <span class="navbar-toggler-icon" data-bs-target="#offcanvasExample"></span>
+        </button>
+        <!-- Offcanvas Trigger-->
+        <a class="navbar-brand fw-bold text-uppercase me-auto" href="/dashboard">El-Ar Collections</a>
+        <form class="d-flex my-auto">
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-person-fill"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/settings"><i class="bi bi-gear"></i> Settings</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-right"></i> Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </form>
+
+      </div>
+    </nav>
+    <!-- Navbar -->
+
+    <!-- Offcanvas -->
+    <div
+      class="offcanvas offcanvas-start bg-dark text-white sidebar-nav"
+      tabindex="-1"
+      id="offcanvasExample"
+      aria-labelledby="offcanvasExampleLabel"
+    >
+      <div class="offcanvas-body p-0">
+        <nav class="navbar-dark">
+          <ul class="navbar-nav">
+            <li class="navbar-nav">
+              <div class="text-muted small fw-bold text-uppercase px-3 my-2">
+                ADMIN
+              </div>
+            </li>
+            <li>
+              <a href="/dashboard" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-speedometer2"></i></span>
+                <span>Dashboard</span>
+              </a>
+            </li>
+
+            <li>
+              <a
+                class="nav-link px-3 sidebar-link"
+                data-bs-toggle="collapse"
+                href="#collapseExample"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                <span class="me-2"><i class="bi bi-clipboard2-minus"></i></span>
+                <span>Inventory</span>
+                <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+              </a>
+
+              <div class="collapse" id="collapseExample">
+                <div>
+                  <ul class="navbar-nav ps-3">
+                    <li>
+                      <a href="/store" class="nav-link px-3">
+                        <span class="me-2"></span>
+                        <span>Store</span>
+                      </a>
+                    </li>
+                  </ul>
+
+                  <ul class="navbar-nav ps-3">
+                    <li>
+                      <a href="/warehouse" class="nav-link px-3">
+                        <span class="me-2"></span>
+                        <span>Warehouse</span>
+                      </a>
+                    </li>
+                  </ul>
+
+                </div>
+              </div>
+            </li>
+
+            <li class="my-3">
+              <hr class="divider" />
+            </li>
+
+            <li class="navbar-nav">
+              <div class="text-muted small fw-bold text-uppercase px-3 my-2">
+                Store
+              </div>
+            </li>
+
+            <li>
+              <a href="/onsiteorder" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-shop-window"></i></span>
+                <span>Onsite Order</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="/onlineorder" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-cart4"></i></span>
+                <span>Online Order</span>
+              </a>
+            </li>
+
+            <li class="my-3">
+              <hr class="divider" />
+            </li>
+
+            <li class="navbar-nav">
+              <div class="text-muted small fw-bold text-uppercase px-3 my-2">
+                Supply
+              </div>
+            </li>
+
+            <li>
+              <a href="/supplier" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-people"></i></span>
+                <span>Supplier</span>
+              </a>
+            </li>
+            <li>
+              <a href="/invoice" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-envelope"></i></span>
+                <span>Supplier Invoice</span>
+              </a>
+            </li>
+            <li>
+              <a href="/shipment" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-truck"></i></span>
+                <span>Shipment</span>
+              </a>
+            </li>
+            <li>
+              <a href="/stockin" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-box-seam"></i></span>
+                <span>Stock In</span>
+              </a>
+            </li>
+            <li>
+              <a href="/stocktransfer" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-arrow-left-right"></i></span>
+                <span>Stock Transfer</span>
+              </a>
+            </li>
+            <li>
+              <a href="/address" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-compass"></i></span>
+                <span>Address</span>
+              </a>
+            </li>
+            <li>
+              <a href="/contact" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-telephone"></i></span>
+                <span>Contact</span>
+              </a>
+            </li>
+            <li>
+              <a href="/sku" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-tags"></i></span>
+                <span>SKU</span>
+              </a>
+            </li>
+            <li>
+              <a href="/product" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-card-checklist"></i></span>
+                <span>Product</span>
+              </a>
+            </li>
+
+            <li class="my-3">
+              <hr class="divider" />
+            </li>
+
+            <li class="navbar-nav">
+              <div class="text-muted small fw-bold text-uppercase px-3 my-2">
+                Point of Sale
+              </div>
+            </li>
+
+            <li>
+              <a href="/pos" class="nav-link ps-3" active>
+                <span class="me-2"><i class="bi bi-pc-display-horizontal"></i></span>
+                <span>POS</span>
+              </a>
+            </li>
+
+            <li class="my-3">
+              <hr class="divider" />
+            </li>
+
+          </ul>
+        </nav>
+
+      </div>
+    </div>
+    <!-- Offcanvas -->
+
+    <!-- Dashboard -->
+    <main class="mt-5 pt-3">
+      <div class="container-fluid pt-5 px-5">
+        {{{body}}}
+      </div>
+    </main>
+    <!-- Dashboard -->
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery-3.5.1.js"></script>
+    <script src="/js/jquery.dataTables.min.js"></script>
+    <script src="/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

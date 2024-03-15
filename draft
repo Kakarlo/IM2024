@@ -1,0 +1,347 @@
+"Select s.id, s.name, si.name as status, concat(a.block, ' ', a.lot, ', ', st.name, ', ', b.name, ', ', ci.name, ', ', p.name) address, c.contact_number as contact from tbl_supplier as s " +
+  "join tbl_supplier_status as si on s.status_id=si.id " +
+  "left join tbl_supplier_address as sa on s.id=sa.supplier_id " +
+  "left join tbl_address as a on sa.address_id=a.id " +
+  "left join tbl_street as st on a.street_id=st.id " +
+  "left join tbl_barangay as b on st.barangay_id=b.id " +
+  "left join tbl_city as ci on b.city_id=ci.id " +
+  "left join tbl_province as p on ci.province_id=p.id " +
+  "left join tbl_supplier_contact as sc on s.id=sc.supplier_id " +
+  "left join tbl_contact as c on sc.contact_id=c.id " +
+  "where s.id > ? " +
+  "order by s.id " +
+  "limit ?",
+  (exports.viewAll = async (req, res) => {
+    await db.getConnection((err, connection) => {
+      if (err) throw err;
+      let sql = "Select s.id, s.name from tbl_supplier as s";
+      connection.query(sql, (err, rows) => {
+        if (err) {
+          res.status(503).json({ error: true, message: "Server Is Down" });
+          console.log(err);
+        }
+        connection.release();
+        res.render("supplier", { rows });
+      });
+    });
+  });
+
+// SUPPLIER CONTROLLER
+const db = require("../../config/connection");
+// Number of rows per table
+const limit = 15;
+
+// View users
+exports.viewAll1 = (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) throw err; // connection unsuccessful
+    console.log("Connected as ID " + connection.threadId);
+
+    // View All query
+    connection.query(
+      "Select s.id, s.name, si.name as status, concat(a.block, ' ', a.lot, ', ', st.name, ', ', b.name, ', ', ci.name, ', ', p.name) address, c.contact_number as contact from tbl_supplier as s " +
+        "join tbl_supplier_status as si on s.status_id=si.id " +
+        "left join tbl_supplier_address as sa on s.id=sa.supplier_id " +
+        "left join tbl_address as a on sa.address_id=a.id " +
+        "left join tbl_street as st on a.street_id=st.id " +
+        "left join tbl_barangay as b on st.barangay_id=b.id " +
+        "left join tbl_city as ci on b.city_id=ci.id " +
+        "left join tbl_province as p on ci.province_id=p.id " +
+        "left join tbl_supplier_contact as sc on s.id=sc.supplier_id " +
+        "left join tbl_contact as c on sc.contact_id=c.id " +
+        "order by s.id " +
+        "limit ? " +
+        "offset ?",
+      [limit, startIndex],
+      (err, rows) => {
+        // When done with the connection, release
+        connection.release();
+
+        if (!err) {
+          res.render("supplier", { rows, layout: "main" });
+          console.log(rows[0]);
+        } else {
+          res.status(400);
+          console.log(err);
+        }
+      }
+    );
+  });
+};
+
+exports.viewAll2 = (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    let sql = "select count(*) as count from tbl_supplier";
+    connection.query(sql, (err, result) => {
+      if (err) throw err;
+      // Used to set the pagination
+      // Video used https://www.youtube.com/watch?v=bRRhjs2Dqc4
+      const numOfPages = Math.ceil(result[0].count / limit);
+      let page = parseInt(req.query.page) || 1;
+      let pagin = pagination(page, numOfPages);
+      const startIndex = (page - 1) * limit;
+      if (page > numOfPages) {
+        res.redirect("?page=" + encodeURIComponent(numOfPages));
+      } else if (page < 1) {
+        res.redirect("?page=" + encodeURIComponent("1"));
+      }
+      // Loads the table
+      sql =
+        "Select s.id, s.name, si.name as status, concat(a.address, ', ', b.name, ', ', ci.name, ', ', p.name) address, c.contact_number as contact from tbl_supplier as s " +
+        "join tbl_supplier_status as si on s.status_id=si.id " +
+        "left join tbl_supplier_address as sa on s.id=sa.supplier_id " +
+        "left join tbl_address as a on sa.address_id=a.id " +
+        "left join tbl_barangay as b on a.barangay_id=b.id " +
+        "left join tbl_city as ci on b.city_id=ci.id " +
+        "left join tbl_province as p on ci.province_id=p.id " +
+        "left join tbl_supplier_contact as sc on s.id=sc.supplier_id " +
+        "left join tbl_contact as c on sc.contact_id=c.id " +
+        "order by s.id " +
+        "limit ? " +
+        "offset ?";
+      connection.query(sql, [limit, startIndex], (err, rows) => {
+        if (err) {
+          res.status(503).json({ error: true, message: "Server Is Down" });
+          console.log(err);
+        }
+        // When done with the connection, release
+        connection.release();
+        // Render page
+        res.render("supplier", { rows, pagin });
+        console.log(rows[0]);
+        console.log(pagin);
+      });
+    });
+  });
+};
+
+exports.viewAll = async (req, res) => {
+  try {
+    let sql = "select count(*) as count from tbl_supplier";
+    const [out] = await db.query(sql);
+    // Pagination
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    let page = parseInt(req.query.page) || 1;
+    let pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+
+    sql = "Select * from view_supplier limit ? offset ?";
+    const [rows] = await db.query(sql, [limit, startIndex]);
+    res.render("supplier", { rows, pagin });
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
+exports.find = (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    let search = req.body.search;
+    let sql = "select count(*) as count from tbl_supplier";
+    connection.query(sql, (err, result) => {
+      if (err) throw err;
+      // Used to set the pagination
+      // Video used https://www.youtube.com/watch?v=bRRhjs2Dqc4
+      const numOfPages = Math.ceil(result[0].count / limit);
+      let page = parseInt(req.query.page) || 1;
+      let pagin = pagination(page, numOfPages);
+      const startIndex = (page - 1) * limit;
+      if (page > numOfPages) {
+        res.redirect("?page=" + encodeURIComponent(numOfPages));
+      } else if (page < 1) {
+        res.redirect("?page=" + encodeURIComponent("1"));
+      }
+      // Loads the table
+      sql =
+        "Select s.id, s.name, si.name as status, concat(a.address, ', ', b.name, ', ', ci.name, ', ', p.name) address, c.contact_number as contact from tbl_supplier as s " +
+        "join tbl_supplier_status as si on s.status_id=si.id " +
+        "left join tbl_supplier_address as sa on s.id=sa.supplier_id " +
+        "left join tbl_address as a on sa.address_id=a.id " +
+        "left join tbl_barangay as b on a.barangay_id=b.id " +
+        "left join tbl_city as ci on b.city_id=ci.id " +
+        "left join tbl_province as p on ci.province_id=p.id " +
+        "left join tbl_supplier_contact as sc on s.id=sc.supplier_id " +
+        "left join tbl_contact as c on sc.contact_id=c.id " +
+        "where s.name like ? " +
+        "order by s.id " +
+        "limit ? " +
+        "offset ?";
+      connection.query(sql, ["%" + search + "%", limit, startIndex], (err, rows) => {
+        if (err) {
+          res.status(503).json({ error: true, message: "Server Is Down" });
+          console.log(err);
+        }
+        // When done with the connection, release
+        connection.release();
+        // Render page
+        res.render("home", { rows, pagin });
+        console.log(rows[0]);
+      });
+    });
+  });
+};
+
+exports.addSupplier1 = (req, res) => {
+  const { name, id, address, barangay, city, province, contact } = req.body;
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query(
+      "Select * from tbl_supplier_status;" + "Insert into tbl_supplier (name, status_id) values (?, ?)",
+      [name, id],
+      (err, status) => {
+        connection.release();
+        if (!err) {
+          res.render("add-supplier", { alert: "User added successfully", status: status[0] });
+        } else {
+          console.log(err);
+          res.render("add-supplier", { error: err.sqlMessage, status: status[0] });
+        }
+      }
+    );
+  });
+};
+
+exports.addSupplier = async (req, res) => {
+  const { name, id, address, barangay, city, province, contact } = req.body;
+  let province_id, city_id, barangay_id, address_id, supplier_id;
+  let sql = "Select * from tbl_province where name like ?";
+  province_id = "";
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query(sql, ["%" + province + "%"], (err, row) => {
+      if (err) throw err;
+      // Check if the value exist
+      if (Object.keys(row).length == 1) {
+        province_id = row[0].id;
+      } else {
+        connection.query("Insert into tbl_province (name) values (?)", [province], (err, row) => {
+          if (err) throw err;
+          province_id = row.insertId;
+        });
+      }
+    });
+    console.log("province id: " + province_id);
+  });
+};
+
+function setProvince() {}
+
+exports.editSupplier = (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query("Select * from tbl_supplier_status", (err, status) => {
+      if (err) throw err;
+      let sql =
+        "Select s.id, s.name, si.name as status_id , a.address, b.name as barangay, ci.name as city, p.name as province, c.contact_number as contact from tbl_supplier as s " +
+        "join tbl_supplier_status as si on s.status_id=si.id " +
+        "left join tbl_supplier_address as sa on s.id=sa.supplier_id " +
+        "left join tbl_address as a on sa.address_id=a.id " +
+        "left join tbl_barangay as b on a.barangay_id=b.id " +
+        "left join tbl_city as ci on b.city_id=ci.id " +
+        "left join tbl_province as p on ci.province_id=p.id " +
+        "left join tbl_supplier_contact as sc on s.id=sc.supplier_id " +
+        "left join tbl_contact as c on sc.contact_id=c.id " +
+        "where s.id = ?";
+      connection.query(sql, [req.params.id], (err, rows) => {
+        if (err) {
+          res.status(503).json({ error: true, message: "Server Is Down" });
+          console.log(err);
+        }
+        connection.release();
+        rows[0].status = status;
+        res.render("edit-supplier", { rows });
+        console.log(rows);
+      });
+    });
+  });
+};
+
+exports.showform = (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query("Select * from tbl_supplier_status", (err, status) => {
+      connection.release();
+      if (!err) {
+        res.render("add-supplier", { status: status });
+      } else {
+        console.log(err);
+      }
+    });
+  });
+};
+
+exports.showStatus = (req, res) => {};
+
+function pagination(page, numOfPages) {
+  arr = [];
+  // Page numbers
+  let start = page - 3 < 1 ? 1 : page - 3;
+  let end = start + 6 >= numOfPages ? numOfPages : start + 6;
+  if (end < page + 3) {
+    start -= page + 3 - numOfPages;
+    if (start < 0) {
+      start = 1;
+    }
+  }
+
+  if (page <= 1) {
+    arr.push({
+      name: "Previous",
+      value: page - 1,
+      disabled: "1",
+    });
+  } else {
+    arr.push({
+      name: "Previous",
+      value: page - 1,
+    });
+  }
+  for (let i = start; i <= end; i++) {
+    if (i == page) {
+      arr.push({
+        name: i.toString(),
+        value: i,
+        active: "1",
+      });
+    } else {
+      arr.push({
+        name: i.toString(),
+        value: i,
+      });
+    }
+  }
+  if (page >= numOfPages) {
+    arr.push({
+      name: "Next",
+      value: page + 1,
+      disabled: "1",
+    });
+  } else {
+    arr.push({
+      name: "Next",
+      value: page + 1,
+    });
+  }
+  return arr;
+}
+
+exports.findSupplier = async (req, res) => {
+  try {
+    let sql = "select count(*) as count from tbl_supplier";
+    const [count] = await db.query(sql);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(count[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Search via name / id
+    const search = req.body.search;
+    sql = "Select * from view_supplier where name like ? or id like ? limit ? offset ?";
+    const [rows] = await db.query(sql, ["%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("supplier", { rows, pagin });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
