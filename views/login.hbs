@@ -25,12 +25,29 @@
                   <h1>LOGIN</h1>
                 </div>
                 <hr />
-                <form action="">
-                  <input type="text" name="" id="" class="form-control my-4 py-2" placeholder="Username" />
-                  <input type="text" name="" id="" class="form-control my-4 py-2" placeholder="Password" />
+                <form action="/" method="POST">
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    class="form-control my-4 py-2"
+                    placeholder="Username"
+                    required
+                  />
+                  <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    class="form-control my-4 py-2"
+                    placeholder="Password"
+                    required
+                  />
+                  {{#each message}}
+                    <p style="color: red;">{{this.msg}}</p>
+                  {{/each}}
                   <div class="text-center"><a href="#" class="nav-link">Forgot Password?</a></div>
                   <div class="text-center mt-3">
-                    <button class="login-btn mt-3">Login</button>
+                    <button type="submit" class="login-btn mt-3">Login</button>
                   </div>
                   <div class="text-center"><a href="#" class="nav-link">Sign Up</a></div>
                 </form>

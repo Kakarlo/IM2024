@@ -4,7 +4,23 @@ const limit = 15;
 
 // Login
 exports.login = async (req, res) => {
-  res.render("login", { layout: false });
+  const message = await req.flash("msg");
+  res.render("login", { layout: false, message });
+};
+
+exports.loginAuthenticate = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    let sql = "select * from tbl_user where name = ? and password = ?";
+    const [rows] = await db.query(sql, [username, password]);
+    if (rows == 0) throw { sqlMessage: "Please enter a correct username and password" };
+    req.flash("msg", { type: "success", msg: username, heading: "Error" });
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Error" });
+    res.redirect("/");
+  }
 };
 
 exports.settings = async (req, res) => {
@@ -13,6 +29,24 @@ exports.settings = async (req, res) => {
 
 exports.pos = async (req, res) => {
   res.render("pos", { layout: false });
+};
+
+exports.contact = async (req, res) => {
+  res.render("contact");
+};
+
+exports.address = async (req, res) => {
+  res.render("address");
+};
+
+exports.dashboard = async (req, res) => {
+  const message = await req.flash("msg");
+  res.render("dashboard", { message });
+};
+
+exports.showStockTransfer = async (req, res) => {
+  const message = await req.flash("msg");
+  res.render("stock-transfer", { message });
 };
 
 exports.showShipment = async (req, res) => {
@@ -143,22 +177,16 @@ async function addAddress(address, barangay, city, province) {
       barangay_id = insert.insertId;
     }
     // Adds Address
-    sql = "Select * from tbl_address where address = ?";
-    const [add] = await db.query(sql, [address]);
-    console.log(add[0]);
-    if (add.length == 1) {
-      address_id = add[0].id;
-    } else {
-      const [insert] = await db.query("Insert into tbl_address (address, barangay_id) values (?, ?)", [
-        address,
-        barangay_id,
-      ]);
-      address_id = insert.insertId;
-    }
+    const [insert] = await db.query("Insert into tbl_address (address, barangay_id) values (?, ?)", [
+      address,
+      barangay_id,
+    ]);
+    address_id = insert.insertId;
     console.log(address_id);
     return address_id;
   } catch (err) {
     console.log(err);
+    return err;
   }
 }
 
@@ -1038,6 +1066,274 @@ exports.editStockinItem = async (req, res) => {
     console.log(err);
     req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Stockin Item Update Error" });
     res.redirect("/stockin/editstockin/" + encodeURIComponent(req.params.id));
+  }
+};
+
+// Warehouse
+exports.showAllWarehouse = async (req, res) => {
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from tbl_warehouse where name like ? or id like ?";
+    const [out] = await db.query(sql, ["%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql =
+      "select w.id, w.name, a.full_address from tbl_warehouse as w " +
+      "join view_full_address as a on w.address_id=a.id " +
+      "where w.name like ? or w.id like ? limit ? offset ?";
+    const [rows] = await db.query(sql, ["%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("warehouse", { rows, pagin, search: search, message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.showWarehouseForm = async (req, res) => {
+  try {
+    const message = await req.flash("msg");
+    res.render("add-warehouse", { message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.addWarehouse = async (req, res) => {
+  try {
+    const { name, address, barangay, city, province, contact } = req.body;
+
+    // Adds Address
+    if (checkString(address) || checkString(barangay) || checkString(city) || checkString(province))
+      throw { sqlMessage: "Please enter valid characters" };
+    const address_id = await addAddress(address, barangay, city, province);
+    // Insert warehouse
+    let sql = "Insert into tbl_warehouse (name, address_id) values (?, ?)";
+    const [warehouse] = await db.query(sql, [name, address_id]);
+    const warehouse_id = warehouse.insertId;
+    // Adds Contact
+    if (checkString(contact)) throw { sqlMessage: "Please enter valid characters" };
+    const contact_id = await addContact(contact);
+    sql = "Insert into tbl_warehouse_contact values (?, ?)";
+    const [warehouse_contact] = await db.query(sql, [warehouse_id, contact_id]);
+
+    req.flash("msg", { type: "success", msg: "Warehouse Added Successfully", heading: "Success" });
+    res.redirect("/warehouse/addwarehouse");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Error" });
+    res.redirect("/warehouse/addwarehouse");
+  }
+};
+
+exports.deleteWarehouse = async (req, res) => {
+  try {
+    let sql = "Select * from tbl_warehouse_item where warehouse_id = ?";
+    const [check] = await db.query(sql, [req.params.id]);
+    if (check.length > 0) throw { sqlMessage: "Warehouse needs to be empty to be deleted!" };
+    sql = "Delete from tbl_warehouse where id = ?";
+    const [rows] = await db.query(sql, [req.params.id]);
+    req.flash("msg", { type: "success", msg: "Warehouse Deleted Successfully", heading: "Success" });
+    res.redirect("/warehouse");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Warehouse Delete Error" });
+    res.redirect("/warehouse");
+  }
+};
+
+exports.showWarehouse = async (req, res) => {
+  try {
+    const message = await req.flash("msg");
+    res.render("edit-warehouse", { message, rows: [{}] });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.editWarehouse = async (req, res) => {
+  try {
+    const { name, description, category } = req.body;
+    if ((checkString(name), checkString(description))) throw { sqlMessage: "Please enter valid characters" };
+    let sql = "Update tbl_product set name = ?, description = ?, category_id = ? where id = ?";
+    const [rows] = await db.query(sql, [name, description, category, req.params.id]);
+    req.flash("msg", { type: "success", msg: "Product Updated Successfully", heading: "Success" });
+    res.redirect("/product");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Product Update Error" });
+    res.redirect("/product");
+  }
+};
+
+exports.showWarehouseInventory = async (req, res) => {
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from view_warehouse_item where id = ? and (sku like ? or product like ?)";
+    const [out] = await db.query(sql, [req.params.id, "%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql = "select * from view_warehouse_item where id = ? and (sku like ? or product like ?)  limit ? offset ?";
+    const [rows] = await db.query(sql, [req.params.id, "%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("warehouse-inventory", {
+      rows,
+      pagin,
+      search: search,
+      message,
+      id: req.params.id,
+      name: req.params.name,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+// Store
+exports.showAllStore = async (req, res) => {
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from tbl_store where name like ? or id like ?";
+    const [out] = await db.query(sql, ["%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql =
+      "select s.id, s.name, a.full_address, t.name as type from tbl_store as s " +
+      "left join view_full_address as a on s.address_id=a.id " +
+      "left join tbl_store_type as t on s.storetype_id=t.id " +
+      "where s.name like ? or s.id like ? limit ? offset ?";
+    const [rows] = await db.query(sql, ["%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("store", { rows, pagin, search: search, message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.showStoreForm = async (req, res) => {
+  try {
+    const message = await req.flash("msg");
+    let sql = "Select * from tbl_store_type order by name";
+    const [type] = await db.query(sql);
+    res.render("add-store", { message, store_option: type });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.addStore = async (req, res) => {
+  try {
+    const { name, type, address, barangay, city, province, contact } = req.body;
+    // Adds Address
+    if (checkString(address) || checkString(barangay) || checkString(city) || checkString(province))
+      throw { sqlMessage: "Please enter valid characters" };
+    const address_id = await addAddress(address, barangay, city, province);
+    // Insert Store
+    let sql = "Insert into tbl_store (name, address_id, storetype_id) values (?, ?, ?)";
+    const [store] = await db.query(sql, [name, address_id, type]);
+    const store_id = store.insertId;
+    // Adds Contact
+    if (checkString(contact)) throw { sqlMessage: "Please enter valid characters" };
+    const contact_id = await addContact(contact);
+    sql = "Insert into tbl_store_contact values (?, ?)";
+    const [store_contact] = await db.query(sql, [store_id, contact_id]);
+
+    req.flash("msg", { type: "success", msg: "Store Added Successfully", heading: "Success" });
+    res.redirect("/store/addstore");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Error" });
+    res.redirect("/store/addstore");
+  }
+};
+
+exports.deleteStore = async (req, res) => {
+  try {
+    let sql = "Select * from tbl_store_item where store_id = ?";
+    const [check] = await db.query(sql, [req.params.id]);
+    if (check.length > 0) throw { sqlMessage: "Store needs to be empty to be deleted!" };
+    sql = "Delete from tbl_store where id = ?";
+    const [rows] = await db.query(sql, [req.params.id]);
+    req.flash("msg", { type: "success", msg: "Store Deleted Successfully", heading: "Success" });
+    res.redirect("/store");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Store Delete Error" });
+    res.redirect("/store");
+  }
+};
+
+exports.showStore = async (req, res) => {
+  try {
+    const message = await req.flash("msg");
+    res.render("edit-store", { message, rows: [{}] });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.editStore = async (req, res) => {
+  try {
+    const { name, description, category } = req.body;
+    if ((checkString(name), checkString(description))) throw { sqlMessage: "Please enter valid characters" };
+    let sql = "Update tbl_product set name = ?, description = ?, category_id = ? where id = ?";
+    const [rows] = await db.query(sql, [name, description, category, req.params.id]);
+    req.flash("msg", { type: "success", msg: "Product Updated Successfully", heading: "Success" });
+    res.redirect("/product");
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Product Update Error" });
+    res.redirect("/product");
+  }
+};
+
+exports.showStoreInventory = async (req, res) => {
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from view_store_item where id = ? and (sku like ? or product like ?)";
+    const [out] = await db.query(sql, [req.params.id, "%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql = "select * from view_store_item where id = ? and (sku like ? or product like ?)  limit ? offset ?";
+    const [rows] = await db.query(sql, [req.params.id, "%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("store-inventory", {
+      rows,
+      pagin,
+      search: search,
+      message,
+      id: req.params.id,
+      name: req.params.name,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
   }
 };
 

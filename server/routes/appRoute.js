@@ -79,11 +79,43 @@ router.post("/stockin/editstockin/:id/additem/:invoice/:warehouse", appControlle
 router.get("/stockin/editstockin/:id/edititem/:item/:invoice/:warehouse", appController.showStockinItem);
 router.post("/stockin/editstockin/:id/edititem/:item/:invoice/:warehouse", appController.editStockinItem);
 
+// Warehouse Table
+router.get("/warehouse", appController.showAllWarehouse);
+router.post("/warehouse", appController.showAllWarehouse);
+router.delete("/warehouse/:id", appController.deleteWarehouse);
+router.get("/warehouse/addwarehouse", appController.showWarehouseForm);
+router.post("/warehouse/addwarehouse", appController.addWarehouse);
+router.get("/warehouse/editwarehouse/:id", appController.showWarehouse);
+// router.post("/warehouse/editwarehouse/:id", appController.editWarehouse);
+
+// Warehouse Inventory
+router.get("/warehouse/:id/inventory/:name", appController.showWarehouseInventory);
+router.post("/warehouse/:id/inventory/:name", appController.showWarehouseInventory);
+
+// Store Table
+router.get("/store", appController.showAllStore);
+router.post("/store", appController.showAllStore);
+router.delete("/store/:id", appController.deleteStore);
+router.get("/store/addstore", appController.showStoreForm);
+router.post("/store/addstore", appController.addStore);
+router.get("/store/editstore/:id", appController.showStore);
+// router.post("/store/editstore/:id", appController.editStore);
+
+// Store Inventory
+router.get("/store/:id/inventory/:name", appController.showStoreInventory);
+router.post("/store/:id/inventory/:name", appController.showStoreInventory);
+
 // Trial
 router.get("/", appController.login);
+router.post("/", appController.loginAuthenticate);
 router.get("/settings", appController.settings);
 router.get("/pos", appController.pos);
 router.get("/shipment", appController.showShipment);
 router.post("/shipment", appController.showShipment);
+router.get("/contact", appController.contact);
+router.get("/address", appController.address);
+router.get("/dashboard", appController.dashboard);
+router.get("/stocktransfer", appController.showStockTransfer);
+router.post("/stocktransfer", appController.showStockTransfer);
 
 module.exports = router;

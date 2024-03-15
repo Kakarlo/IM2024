@@ -157,3 +157,39 @@ if (deleteStockinItem != null) {
       "/stockin/editstockin/" + id + "/" + warehouse + "/" + item + "?_method=DELETE";
   });
 }
+
+// Delete Warehouse
+let deleteWarehouse = document.getElementById("deleteWarehouse");
+if (deleteWarehouse != null) {
+  console.log("Working");
+  deleteWarehouse.addEventListener("show.bs.modal", function (event) {
+    let button = event.relatedTarget;
+    let id = button.getAttribute("data-bs-id");
+
+    document.getElementById("deleteForm").action = "/warehouse/" + id + "?_method=DELETE";
+  });
+}
+
+// Delete Stock Transfer
+let deleteStockTransfer = document.getElementById("deleteStockTransfer");
+if (deleteStockTransfer != null) {
+  console.log("Working");
+  deleteStockTransfer.addEventListener("show.bs.modal", function (event) {
+    let button = event.relatedTarget;
+    let id = button.getAttribute("data-bs-id");
+
+    document.getElementById("deleteForm").action = "/stocktransfer/" + id + "?_method=DELETE";
+  });
+}
+
+// Delete Stock Transfer
+let deleteStore = document.getElementById("deleteStore");
+if (deleteStore != null) {
+  console.log("Working");
+  deleteStore.addEventListener("show.bs.modal", function (event) {
+    let button = event.relatedTarget;
+    let id = button.getAttribute("data-bs-id");
+
+    document.getElementById("deleteForm").action = "/store/" + id + "?_method=DELETE";
+  });
+}

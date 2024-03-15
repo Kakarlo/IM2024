@@ -1,0 +1,46 @@
+{{#each message}}
+  <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+    <strong>{{heading}}</strong>
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{{/each}}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/store">Store</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Add Store</li>
+  </ol>
+</nav>
+
+<form class="row g-3 needs-validation" method="POST" action="/store/addstore">
+  <div class="col-md-6">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" name="name" placeholder="Name" required />
+  </div>
+  <div class="col-md-6">
+    <label for="type">Type</label>
+    <select class="form-select" id="type" name="type" required>
+      {{#each store_option}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <h4>Address</h4>
+  {{> address-form}}
+  <h4>Contact</h4>
+  <div class="col-md-4">
+    <label for="contact">Contact</label>
+    <input
+      type="tel"
+      class="form-control"
+      id="contact"
+      name="contact"
+      placeholder="Contact"
+      required
+    />
+  </div>
+  <div class="col-md-12">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
