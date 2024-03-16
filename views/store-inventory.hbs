@@ -37,6 +37,7 @@
         <th scope="col">SKU</th>
         <th scope="col">Product Name</th>
         <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
         <th scope="col" class="text-end">Action</th>
       </tr>
     </thead>
@@ -46,6 +47,7 @@
           <td>{{this.sku}}</td>
           <td>{{this.product}}</td>
           <td>{{this.quantity}}</td>
+          <td>{{this.retail_price}}</td>
           <td class="text-end">
             <a href="/store/{{../id}}/inventory/{{../name}}/edititem/{{this.id}}" type="button" class="btn btn-light btn-sm"><i
                 class="bi bi-pencil"
@@ -71,18 +73,18 @@
       {{#if active}}
         <li class="page-item active"><a
             class="page-link"
-            href="/warehouse/{{../id}}/inventory?page={{this.value}}&search={{../search}}"
+            href="/store/{{../id}}/inventory/{{../name}}?page={{this.value}}&search={{../search}}"
           >{{this.name}}</a></li>
       {{else}}
         {{#if disabled}}
           <li class="page-item disabled"><a
               class="page-link"
-              href="/warehouse/{{../id}}/inventory?page={{this.value}}&search={{../search}}"
+              href="/store/{{../id}}/inventory/{{../name}}?page={{this.value}}&search={{../search}}"
             >{{this.name}}</a></li>
         {{else}}
           <li class="page-item"><a
               class="page-link"
-              href="/warehouse/{{../id}}/inventory?page={{this.value}}&search={{../search}}"
+              href="/store/{{../id}}/inventory/{{../name}}?page={{this.value}}&search={{../search}}"
             >{{this.name}}</a></li>
         {{/if}}
       {{/if}}

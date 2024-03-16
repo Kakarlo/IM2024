@@ -104,6 +104,8 @@ router.get("/store/editstore/:id", appController.showStore);
 // Store Inventory
 router.get("/store/:id/inventory/:name", appController.showStoreInventory);
 router.post("/store/:id/inventory/:name", appController.showStoreInventory);
+router.get("/store/:id/inventory/:name/additem", appController.showStoreItemForm);
+router.post("/store/:id/inventory/:name/additem", appController.addStoreItem);
 
 // Trial
 router.get("/", appController.login);
@@ -114,6 +116,7 @@ router.get("/shipment", appController.showShipment);
 router.post("/shipment", appController.showShipment);
 router.get("/contact", appController.contact);
 router.get("/address", appController.address);
+router.post("/address", appController.address);
 router.get("/dashboard", appController.dashboard);
 router.get("/stocktransfer", appController.showStockTransfer);
 router.post("/stocktransfer", appController.showStockTransfer);

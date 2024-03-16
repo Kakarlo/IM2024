@@ -32,11 +32,47 @@ exports.pos = async (req, res) => {
 };
 
 exports.contact = async (req, res) => {
-  res.render("contact");
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from view_contact where contact_number like ? or id like ?";
+    const [out] = await db.query(sql, ["%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql = "Select * from view_contact where contact_number like ? or id like ? order by id limit ? offset ?";
+    const [rows] = await db.query(sql, ["%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("contact", { rows, pagin, search: search, message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
 };
 
 exports.address = async (req, res) => {
-  res.render("address");
+  try {
+    const search = req.body.search || req.query.search || "";
+    const message = await req.flash("msg");
+    console.log(search);
+    let sql = "select count(*) as count from view_address where address like ? or id like ?";
+    const [out] = await db.query(sql, ["%" + search + "%", "%" + search + "%"]);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const numOfPages = await Math.ceil(out[0].count / limit);
+    const pagin = await pagination(page, numOfPages);
+    const startIndex = (page - 1) * limit;
+    // Show All
+    sql = "Select * from view_address where address like ? or id like ? order by id limit ? offset ?";
+    const [rows] = await db.query(sql, ["%" + search + "%", "%" + search + "%", limit, startIndex]);
+    res.render("address", { rows, pagin, search: search, message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
 };
 
 exports.dashboard = async (req, res) => {
@@ -1321,7 +1357,7 @@ exports.showStoreInventory = async (req, res) => {
     const pagin = await pagination(page, numOfPages);
     const startIndex = (page - 1) * limit;
     // Show All
-    sql = "select * from view_store_item where id = ? and (sku like ? or product like ?)  limit ? offset ?";
+    sql = "select * from view_store_item where store_id = ? and (sku like ? or product like ?)  limit ? offset ?";
     const [rows] = await db.query(sql, [req.params.id, "%" + search + "%", "%" + search + "%", limit, startIndex]);
     res.render("store-inventory", {
       rows,
@@ -1334,6 +1370,39 @@ exports.showStoreInventory = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
+  }
+};
+
+exports.showStoreItemForm = async (req, res) => {
+  try {
+    const message = await req.flash("msg");
+    let sql = "Select * from tbl_sku order by codename";
+    const [sku] = await db.query(sql, [req.params.id]);
+    res.render("add-store-item", {
+      sku_option: sku,
+      message,
+      id: req.params.id,
+      name: req.params.name,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
+exports.addStoreItem = async (req, res) => {
+  try {
+    const { sku, qty, price } = req.body;
+
+    sql = "Insert into tbl_store_item (store_id, sku_id, quantity, retail_price) values (?, ?, ?, ?)";
+    const [rows] = await db.query(sql, [req.params.id, sku, qty, price]);
+
+    req.flash("msg", { type: "success", msg: "Store Item Added Successfully", heading: "Success" });
+    res.redirect("/store/" + encodeURIComponent(req.params.id) + "/inventory/" + encodeURIComponent(req.params.name));
+  } catch (err) {
+    console.log(err);
+    req.flash("msg", { type: "danger", msg: err.sqlMessage, heading: "Error" });
+    res.redirect("/store/" + encodeURIComponent(req.params.id) + "/inventory/" + encodeURIComponent(req.params.name));
   }
 };
 
